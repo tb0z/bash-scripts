@@ -34,8 +34,8 @@ for i in $(find . -name "Cert*" -print);do if openssl x509 -noout -text -in $i |
 for i in $(find . -name "Cert*" -print); do mv $i $i-`openssl x509 -in $i -noout -fingerprint | openssl sha256 |awk '{print $2}'`;done
 
 #Identify duplicate certificates and remove
-if [ $(ls -l | grep Cert | cut -d - -f 2 | sort | uniq -d | wc -l) -ne 0 ]; then 
-	for i in $(find . -name "Cert*" -print | cut -d - -f 2 | sort | uniq -d);do echo -e "DUPLICATE DETECTED" \\n`ls | grep $i` ; openssl x509 -in `ls | grep $i | sed -n '1p'` -noout -subject -fingerprint ; echo -e "Removing" `ls | grep $i | sed -n '1d;p'`; rm `ls | grep $i` | sed -n '1d;p';done | tee -a $bundlename-cleanup.$(date +%Y-%m-%d).log
+if [ $(ls | grep Cert | cut -d - -f 2 | sort | uniq -d | wc -l) -ne 0 ]; then 
+	for i in $(find . -name "Cert*" -print | cut -d - -f 2 | sort | uniq -d);do echo -e "DUPLICATE DETECTED" \\n`ls | grep $i` ; openssl x509 -in `ls | grep $i | sed -n '1p'` -noout -subject -fingerprint ; echo -e "Removing" `ls | grep $i | sed -n '1d;p'`; rm `ls | grep $i | sed -n '1d;p'`;done | tee -a $bundlename-cleanup.$(date +%Y-%m-%d).log
 else
 	echo "No Duplicates Detected" | tee -a $bundlename-cleanup.$(date +%Y-%m-%d).log
 fi
